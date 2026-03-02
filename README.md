@@ -36,13 +36,13 @@ project/
 
   * Install Pillow:
 
-   ```pip install pillow```
+     - ```pip install pillow```
 
   * Ensure all distorted images are located inside the images/ folder.
 
   * Run the program:
 
-    ```python main.py```
+    - ```python main.py```
 ## 4. How It Works
 
 Words are pre-mapped to semantic categories.
