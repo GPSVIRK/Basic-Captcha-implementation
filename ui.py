@@ -1,44 +1,8 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import random as rnd
-
-rnd.seed()
-DATA = {"apple":1, "car":0, "banana":1, "pineapple":1, "mango":1, "tire":0, "steering":0, "wheel":0}
-#str:key, if key1 == key2 then str1 and str2 are related
-
-def validate(mainWord, validWords, words):#will use tkinter display, button select, submit calls this
-    if words[0] == '':
-        for word in validWords:
-            if DATA[word] == DATA[mainWord]:
-                return False
-    else:
-        for word in words:
-            if DATA[word] != DATA[mainWord]:
-                return False
-
-        for word in validWords:
-            if (DATA[word] == DATA[mainWord]) & (word not in words):
-                return False
-
-    return True
-
-def randomised():#returns str list(str)
-    words = list(DATA.keys())
-
-    usedInd = list()
-
-    while len(usedInd) < 4:
-        ind = rnd.randrange(len(words))
-        if ind not in usedInd:
-            usedInd.append(ind)
-
-    validWords = [words[usedInd[i]] for i in range(1,4)]
-    mainWord = words[usedInd[0]]
-
-    return mainWord, validWords
 
 class TuringTestApp:
-    def __init__(self, root):
+    def __init__(self, root, captchaLogic):
         self.root = root
         self.root.title("Semantic Turing Test")
         self.root.geometry("600x600")
@@ -51,9 +15,10 @@ class TuringTestApp:
         )
         self.title_label.pack(pady=20)
 
-        self.main_word, self.valid_words = randomised()
+        self.captcha_logic = captchaLogic
+
         # Load main distorted word image (apple as placeholder)
-        self.main_image = self.load_image(f"images/{self.main_word}.png", (200, 80))
+        self.main_image = self.load_image(f"images/{self.captcha_logic.main_word}.png", (200, 80))
         self.main_image_label = tk.Label(root, image=self.main_image)
         self.main_image_label.pack(pady=20)
 
@@ -64,7 +29,7 @@ class TuringTestApp:
         self.check_vars = []
         self.option_images = []
 
-        for word in self.valid_words:
+        for word in self.captcha_logic.valid_words:
             option_frame = tk.Frame(self.options_frame)
             option_frame.pack(side="left", padx=20)
 
@@ -106,18 +71,15 @@ class TuringTestApp:
 
     def evaluate_selection(self):
         selected = [
-            word for word, var in zip(self.valid_words, self.check_vars)
+            word for word, var in zip(self.captcha_logic.valid_words, self.check_vars)
             if var.get()
         ]
+        self.displayResult(self.captcha_logic.validate(selected))
 
-        truth_val = validate(self.main_word, self.valid_words, selected)
+    def displayResult(self, truth_val):
         if truth_val:
             self.result_label.config(text="You are a human")
         else:
             self.result_label.config(text="You are a bot")
 
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = TuringTestApp(root)
-    root.mainloop()
