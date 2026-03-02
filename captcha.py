@@ -7,13 +7,26 @@ DATA = {"apple":1, "car":0, "banana":1, "pineapple":1, "mango":1, "tire":0, "ste
 def distortWord(word): #would use generator,instead using premade distortions
     return "images/"+word+".png"
 
-def displayWord(word): #with tkinter
+def displayWord(word, wordImg): #with tkinter
     print(word)
 
 def distortDisplayWord(word):
-    word = distortWord(word)
-    displayWord(word)
+    wordImg = distortWord(word)
+    displayWord(word, wordImg)
 
-for word in DATA:
-    print(word)
-    distortDisplayWord(word)
+def getWordInputs():#would use tkinter to get the selected buttons
+    print("write down the words, comma separated")
+    words=input().split(',')
+    words = [word.strip() for word in words]
+    return words
+
+def validate(mainWord, validWords):#will use tkinter display, button select, submit calls this
+    words = getWordInputs()
+
+    for word in words:
+        if (DATA[word] != DATA[mainWord]) & (word not in validWords):
+            return False
+
+    return True
+
+words = list(DATA.keys())
